@@ -30,3 +30,24 @@ function updateLastUserActivityTime(userId, posts, createPost, deletePost) {
     });
   }
   
+
+  async function fun1(){
+    let delhiWeather= new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            resolve('42C')
+        },2000)
+    })
+}
+    let bangaloreWeather= new Promise((resolve,reject)=>{
+        setTimeout(()=>{
+            resolve('39C')
+        },5000)
+    })
+
+console.log('Fetching Delhi weather...')
+let delhiW= await delhiWeather
+console.log('Fetched Weather:'+delhiW)
+console.log('Fetching Bangalore weather...')
+let BangaloreW= await bangaloreWeather
+console.log('Fetched Bangalore Weather:'+BangaloreW)
+return [delhiW, BangaloreW]
