@@ -14,36 +14,32 @@
     console.log('person2: shows ticket')
     const preMovie= async()=>{
         const promiseWifeBringingTickets= new Promise((resolve,reject)=>{
-            setTimeout(()=> resolve('ticket'),3000);
+            setTimeout(()=> reject('ticket'),3000);
         });
+    let ticket     
+    try{
     const getPopcorn= new Promise((resolve,reject)=>resolve(`popcorn`));
     const addButter= new Promise((resolve,reject)=>resolve(`butter`));
     const getColdDrinks= new Promise((resolve,reject)=>resolve(`coldDrinks`));
-    let ticket= await promiseWifeBringingTickets;
     
-    console.log(`husband: I have the ${ticket}`);
-    console.log(`husband: we should go in`);
-    console.log(`wife:no I am hungry`);
+    ticket= await promiseWifeBringingTickets;
 
-    let popcorn= await getPopcorn;
-    console.log(`husband: we should go in`);
-    console.log(`wiffe:i need butter on my popcorn`);
 
-    let butter= await addButter;
-    console.log(`husband:I got some ${butter} on popcorn`);
-    console.log(`husband : Anything else?`);
-
-    let coldDrinks= await getColdDrinks;
-    console.log(`wife: sure let's have cold drink`);
-    console.log(`wife:lets go we are getting late`);
-    console.log(`husband: thank you for the reminder`);
-
+    
+    let[popcorn,butter,coldDrinks] = await Promise.all([getPopcorn,addButter,getColdDrinks])
+    
+    console.log(`${popcorn},${butter},${coldDrinks}`)
+    }
+    catch(e){
+        ticket='sad face'
+    }
     return ticket;
 
     }
     preMovie().then((m)=>console.log(`person3: shows ${m}`))
     console.log('person4: shows ticket')
     console.log('person5: shows ticket')
+
 </script>
 </body>
 </html>
