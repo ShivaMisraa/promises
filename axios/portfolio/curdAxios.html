@@ -96,8 +96,8 @@
         .then((Response)=>{
             console.log(Response)
         })
-        .catch((err)=>{
-            console.log(err)
+        .catch((error)=>{
+            console.log(error)
         })
 
         // let expanseArray = [];
@@ -116,10 +116,17 @@
         let parentList = document.getElementById('parentList')
         parentList.appendChild(newLi)
 
-        localStorage.setItem('expenses', JSON.stringify(expanseArray));
-        currentInput.value = '';
-        amntNo.value = '';
-        dropDown.selectedIndex = 0;
+        axios.get("https://crudcrud.com/api/2ce2a760a7c7486ca8c0f64f1efb1ed4")
+            .then((Response)=>{
+                console.log(error)
+            })
+            .catch((error)=>{
+                console.log(error)
+            })
+        // localStorage.setItem('expenses', JSON.stringify(expanseArray));
+        // currentInput.value = '';
+        // amntNo.value = '';
+        // dropDown.selectedIndex = 0;
     }
     function removeExpanse(currElement) {
         currElement.parentElement.remove()
