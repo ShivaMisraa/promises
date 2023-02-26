@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+
+    <title>Restaurent App</title>
+</head>
+<header>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <h1 style="text-align: center;">Order List</h1>
+    <hr>
+</header>
+
+<body>
+    <form onsubmit="saveOrder(event)">
+        <div class="container" style="text-align: center;">
+            <label><b> Choose Price </b></label>
+            <input type="number" id="orderPrice" name="price">
+            <label><b> Choose Dish</b></label>
+            <input type="text" id="orderedDish" name="dish">
+            <label> <b> Choose Table </b></label>
+            <select id="table">
+                <option value="none">Select here </option>
+                <option value="Table 1">Table 1</option>
+                <option value="Table 2">Table 2</option>
+                <option value="Table 3">Table 3</option>
+            </select>
+            <button>Submit</button>
+            <hr>
+        </div>
+    </form>
+    <h4 style="margin-top: 25px; margin-left: 25px ; text-align: left;">List Of Table </h4>
+    <ul id="ListOfOrders"></ul>
+    <h2>Table 1</h2>
+    <ul id="table1"></ul>
+    <h2>Table 2</h2>
+    <ul id="table2"></ul>
+    <h2>Table 3</h2>
+    <ul id="table3"></ul>
+
+
+    <script>
+        function saveOrder(event) {
+            event.preventDefault();
+
+            var price = event.target.price.value;
+            var dish = event.target.dish.value;
+            var table = event.target.table.value;
+
+
+            var obj = {
+                price: price,
+                dish: dish,
+                table: table
+            };
+
+            var tableList = document.getElementById(table);
+
+            var orderItem = document.createElement("li");
+            orderItem.textContent = (obj.table + '--' + obj.dish + '--' + '$' + obj.price);
+
+            tableList.appendChild(orderItem);
+
+            event.target.reset();
+
+
+
+            axios.post("https://crudcrud.com/api/70b83a857c014922b39df5106d0069b8", obj)
+                .then((Response) => {
+                    console.log(Response)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            showOnScreen(obj)
+
+
+        }
+        function loadData() {
+            axios.get("https://crudcrud.com/api/70b83a857c014922b39df5106d0069b8")
+                .then((response) => {
+                    console.log(response.data);
+                    for (var i = 0; i < response.data.length; i++) {
+                        showOnScreen(response.data[i]);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+
+        
+        // Call the loadData function to retrieve the data when the page loads
+        loadData();
+
+        function showOnScreen(obj) {
+            var parentele = document.getElementById('ListOfOrders');
+            var childele = document.createElement('li');
+            childele.textContent = (obj.table + '--' + obj.dish + '--' + '$' + obj.price);
+            parentele.appendChild(childele);
+            childele.setAttribute('data-id', obj._id);
+
+            const delButton = document.createElement('input');
+            delButton.type = 'button';
+            delButton.value = 'Delete';
+            delButton.className = 'deletebutton';
+            delButton.style.backgroundColor = 'grey';
+            delButton.style.marginLeft = '5px';
+
+            delButton.onclick = () => {
+                const id = childele.getAttribute('data-id'); // get the id of the object
+                axios.delete(`https://crudcrud.com/api/70b83a857c014922b39df5106d0069b8/${id}`)
+                    .then((response) => {
+                        console.log(response);
+                        parentele.removeChild(childele); // remove the li element from the list
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            };
+
+            childele.appendChild(delButton);
+
+            // add the data to the appropriate table element
+            var tableList = document.getElementById(obj.table);
+            var orderItem = document.createElement("li");
+            orderItem.textContent = (obj.table + '--' + obj.dish + '--' + '$' + obj.price);
+
+            tableList.appendChild(orderItem);
+        }
+
+
+
+
+        
+    </script>
+</body>
+
+</html>
