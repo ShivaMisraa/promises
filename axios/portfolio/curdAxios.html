@@ -92,7 +92,7 @@
             name: currentExpanseName
         };
 
-        axios.post('https://crudcrud.com/api/2ce2a760a7c7486ca8c0f64f1efb1ed4/AppointmentData',expObj)
+        axios.post('https://crudcrud.com/api/f8506f87c66a419789dd5cc2da984f10/data',expObj)
         .then((Response)=>{
             console.log(Response)
         })
@@ -116,7 +116,7 @@
         let parentList = document.getElementById('parentList')
         parentList.appendChild(newLi)
 
-        axios.get("https://crudcrud.com/api/2ce2a760a7c7486ca8c0f64f1efb1ed4")
+        axios.get("https://crudcrud.com/api/f8506f87c66a419789dd5cc2da984f10/data")
             .then((Response)=>{
                 console.log(error)
             })
@@ -129,6 +129,7 @@
         // dropDown.selectedIndex = 0;
     }
     function removeExpanse(currElement) {
+        axios.delete(`https://crudcrud.com/api/f8506f87c66a419789dd5cc2da984f10/data`)
         currElement.parentElement.remove()
     }
     function editExpanse(currElement) {

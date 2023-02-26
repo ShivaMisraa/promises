@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+
+    <title>Expanse Tracker</title>
+</head>
+<header>
+    <h1 style="text-align: center;">Expanse Tracker</h1>
+    <hr>
+</header>
+
+<body style="background-color: beige;">
+    <form onsubmit="ExpanseSave(event)">
+        <div class="container">
+            <div class="box" style="text-align: center;">
+                <label><b>Expanse Ammount:</b></label>
+                <input type="number" id="ExpanseAmmount" placeholder="Enter Ammount" name="Ammount" required>
+                <label><b>Description:</b></label>
+                <input type="text" placeholder="Enter Description" id="ExpDescript" name="Description" required>
+                <label><b>Choose Category:</b></label>
+                <select name="Category" id="Categories" required>
+                    <option value="Select Categories">Select Categories</option>
+                    <option value="Food ">Food</option>
+                    <option value="EMI">EMI</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <button><b>Add Expance</b></button>
+            </div>
+        </div>
+
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <hr>
+    <h4 style="margin-top: 15px;  text-align: center;">List Of Expanses</h4>
+
+    <ul id="ListOfUsers"></ul>
+    <script>
+        function ExpanseSave(event) {
+            event.preventDefault()
+            var myAmmount = event.target.Ammount.value
+            var myDescription = event.target.Description.value
+            var MyCategory = event.target.Category.value
+
+            var obj = {
+                myAmmount,
+                myDescription,
+                MyCategory,
+            }
+            axios.post("https://crudcrud.com/api/fe4a76bde3a949bfb553443ca96e5928/AppointmentDetails", obj)
+                .then((Response) => {
+                    console.log(Response)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            // localStorage.setItem(obj.myDescription, JSON.stringify(obj))
+            onScreen(obj)
+        }
+        function loadData() {
+            axios.get("https://crudcrud.com/api/fe4a76bde3a949bfb553443ca96e5928/AppointmentDetails")
+                .then((response) => {
+                    console.log(response.data);
+                    for (var i = 0; i < response.data.length; i++) {
+                        onScreen(response.data[i]);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+
+        // Call the loadData function to retrieve the data when the page loads
+        loadData();
+
+
+        function onScreen(obj) {
+            var parentele = document.getElementById('ListOfUsers')
+            var childele = document.createElement('li')
+            childele.textContent = (obj.myAmmount + '--' + obj.myDescription + '--' + obj.MyCategory)
+            parentele.appendChild(childele)
+            childele.setAttribute('data-id', obj._id)
+
+
+
+
+
+            const delButton = document.createElement('input')
+            delButton.type = 'button'
+            delButton.value = 'Delete'
+            delButton.className = 'deletebutton'
+            delButton.style.backgroundColor = 'grey'
+            delButton.style.marginLeft = '5px'
+
+            delButton.onclick = () => {
+                const id = childele.getAttribute('data-id') // get the id of the object
+                axios.delete(`https://crudcrud.com/api/fe4a76bde3a949bfb553443ca96e5928/AppointmentDetails/${id}`)
+                    .then((response) => {
+                        console.log(response)
+                        parentele.removeChild(childele) // remove the li element from the list
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+
+
+            childele.appendChild(delButton)
+
+            const editButton = document.createElement('input')
+            editButton.type = "button"
+            editButton.value = 'Edit'
+            editButton.className = 'editbutton'
+            editButton.style.backgroundColor = 'yellow'
+            editButton.style.marginLeft = '5px'
+
+            editButton.onclick = () => {
+                localStorage.removeItem(obj.myDescription)
+                parentele.removeChild(childele)
+                document.getElementById('ExpanseAmmount').value = obj.myAmmount
+                document.getElementById('ExpDescript').value = obj.myDescription
+                document.getElementById('Categories').value = obj.MyCategory
+
+                axios.put(`https://crudcrud.com/api/fe4a76bde3a949bfb553443ca96e5928/AppointmentDetails/${obj._id}`, {
+                    myAmmount: document.getElementById("ExpanseAmmount").value,
+                    myDescription: document.getElementById("ExpDescript").value,
+                    MyCategory: document.getElementById("Categories").value
+                })
+                    .then((response) => {
+                        console.log(response);
+                        // Update the record in the UI
+                        childele.textContent = `${response.data.myAmmount}--${response.data.myDescription}--${response.data.MyCategory}`;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
+            childele.appendChild(editButton)
+        }
+    </script>
+
+</body>
+
+</html>
